@@ -4,10 +4,13 @@ const { h } = window.App;
 import { matchPath } from './chunk1.js';
 
 class MyApp {
+    constructor() {
+        this.title = 'Tour of Heroes';
+    }
     render() {
         return (h("div", null,
             h("header", null,
-                h("h1", null, "Stencil App Starter")),
+                h("h1", null, this.title)),
             h("main", null,
                 h("stencil-router", null,
                     h("stencil-route", { url: '/', component: 'app-home', exact: true }),

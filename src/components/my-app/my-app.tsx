@@ -7,11 +7,13 @@ import { Component } from '@stencil/core';
 })
 export class MyApp {
 
+  private title: string = 'Tour of Heroes';
+
   render() {
     return (
       <div>
         <header>
-          <h1>Stencil App Starter</h1>
+          <h1>{this.title}</h1>
         </header>
 
         <main>
