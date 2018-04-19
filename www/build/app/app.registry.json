@@ -1,0 +1,28 @@
+{
+  "namespace": "App",
+  "fsNamespace": "app",
+  "loader": "../app.js",
+  "corePolyfilled": "es5-build-disabled.js",
+  "global": "app.global.js",
+  "core": "app.core.js",
+  "components": {
+    "app-home": {
+      "$": "app-home"
+    },
+    "app-profile": {
+      "$": "app-profile"
+    },
+    "my-app": {
+      "$": "my-app"
+    },
+    "stencil-route": {
+      "$": "my-app"
+    },
+    "stencil-route-link": {
+      "$": "app-home"
+    },
+    "stencil-router": {
+      "$": "my-app"
+    }
+  }
+}
