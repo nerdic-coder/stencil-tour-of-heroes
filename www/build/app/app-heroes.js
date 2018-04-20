@@ -8,6 +8,12 @@ class Heroes {
             name: 'Windstorm'
         };
     }
+    handleChangeName(event) {
+        this.hero = {
+            id: this.hero.id,
+            name: event.target.value
+        };
+    }
     render() {
         return (h("div", { class: 'app-heroes' },
             h("h2", null,
@@ -17,10 +23,12 @@ class Heroes {
                 h("span", null, "id: "),
                 this.hero.id),
             h("div", null,
-                h("span", null, "name: "),
-                this.hero.name)));
+                h("label", null,
+                    "name:",
+                    h("input", { type: "text", value: this.hero.name, onInput: (event) => this.handleChangeName(event), placeholder: "name" })))));
     }
     static get is() { return "app-heroes"; }
+    static get properties() { return { "hero": { "state": true } }; }
     static get style() { return ".app-heroes {\n  padding: 10px;\n}"; }
 }
 
