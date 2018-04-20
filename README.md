@@ -1,5 +1,6 @@
 # Stencil Tour of Heroes
-Tour of Heroes tutorial in StencilJS
+Tour of Heroes tutorial in Stencil.
+
 Based on the [Angular Tutorial: Tour of Heroes](https://angular.io/tutorial)
 
 ## Getting Started

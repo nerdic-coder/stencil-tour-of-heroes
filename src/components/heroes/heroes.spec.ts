@@ -1,16 +1,16 @@
 import { render } from '@stencil/core/testing';
-import { AppHome } from './app-home';
+import { Heroes } from './heroes';
 
-describe('app', () => {
+describe('app-heroes', () => {
   it('should build', () => {
-    expect(new AppHome()).toBeTruthy();
+    expect(new Heroes()).toBeTruthy();
   });
 
   describe('rendering', () => {
     beforeEach(async () => {
       await render({
-        components: [AppHome],
-        html: '<app-home></app-home>'
+        components: [Heroes],
+        html: '<app-heroes></app-heroes>'
       });
     });
   });
