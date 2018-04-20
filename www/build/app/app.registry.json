@@ -6,20 +6,14 @@
   "global": "app.global.js",
   "core": "app.core.js",
   "components": {
-    "app-home": {
-      "$": "app-home"
-    },
-    "app-profile": {
-      "$": "app-profile"
+    "app-heroes": {
+      "$": "app-heroes"
     },
     "my-app": {
       "$": "my-app"
     },
     "stencil-route": {
       "$": "my-app"
-    },
-    "stencil-route-link": {
-      "$": "app-home"
     },
     "stencil-router": {
       "$": "my-app"
