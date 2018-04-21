@@ -2,6 +2,7 @@
 Tour of Heroes tutorial in Stencil.
 
 Based on the [Angular Tutorial: Tour of Heroes](https://angular.io/tutorial)
+[Read the tutorial part 1](https://medium.com/mystohaxen/stencil-tutorial-tour-of-heroes-832a09ef3d82)
 
 ## Getting Started
 
