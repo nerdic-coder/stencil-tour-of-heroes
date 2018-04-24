@@ -10,7 +10,7 @@ export class Heroes {
 
   @State() private selectedHero: Hero;
 
-  private heroes = HEROES;
+  private heroes: Hero[] = HEROES;
 
   handleChangeName(event) {
     this.selectedHero = {
@@ -24,7 +24,18 @@ export class Heroes {
   }
 
   render() {
-    const heroDetails = this.selectedHero ? (
+
+    return (
+<div class='app-heroes'>
+  <h2>My Heroes</h2>
+  <ul class="heroes">
+    {this.heroes.map((hero) =>
+      <li class={(this.selectedHero === hero ? 'selected' : '')} onClick={ () => this.onSelect(hero)}>
+        <span class="badge">{hero.id}</span> {hero.name}
+      </li>
+      )}
+  </ul>
+  {this.selectedHero ? (
       <div>
       <h2>{ this.selectedHero.name.toUpperCase() } Details</h2>
       <div><span>id: </span>{this.selectedHero.id}</div>
@@ -36,19 +47,8 @@ export class Heroes {
       </div>
     ) : (
       <p>Select a hero!</p>
-    );
-
-    return (
-<div class='app-heroes'>
-  <h2>My Heroes</h2>
-  <ul class="heroes">
-    {this.heroes.map((hero) =>
-      <li class={ (this.selectedHero === hero ? 'selected' : '')} onClick={ () => this.onSelect(hero)}>
-        <span class="badge">{hero.id}</span> {hero.name}
-      </li>
-      )}
-  </ul>
-  {heroDetails}
+    )
+  }
 </div>
     );
   }

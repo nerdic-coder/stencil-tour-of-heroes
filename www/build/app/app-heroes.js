@@ -28,24 +28,23 @@ class Heroes {
         this.selectedHero = hero;
     }
     render() {
-        const heroDetails = this.selectedHero ? (h("div", null,
-            h("h2", null,
-                this.selectedHero.name.toUpperCase(),
-                " Details"),
-            h("div", null,
-                h("span", null, "id: "),
-                this.selectedHero.id),
-            h("div", null,
-                h("label", null,
-                    "name:",
-                    h("input", { type: "text", value: this.selectedHero.name, onInput: (event) => this.handleChangeName(event), placeholder: "name" }))))) : (h("p", null, "Select a hero!"));
         return (h("div", { class: 'app-heroes' },
             h("h2", null, "My Heroes"),
             h("ul", { class: "heroes" }, this.heroes.map((hero) => h("li", { class: (this.selectedHero === hero ? 'selected' : ''), onClick: () => this.onSelect(hero) },
                 h("span", { class: "badge" }, hero.id),
                 " ",
                 hero.name))),
-            heroDetails));
+            this.selectedHero ? (h("div", null,
+                h("h2", null,
+                    this.selectedHero.name.toUpperCase(),
+                    " Details"),
+                h("div", null,
+                    h("span", null, "id: "),
+                    this.selectedHero.id),
+                h("div", null,
+                    h("label", null,
+                        "name:",
+                        h("input", { type: "text", value: this.selectedHero.name, onInput: (event) => this.handleChangeName(event), placeholder: "name" }))))) : (h("p", null, "Select a hero!"))));
     }
     static get is() { return "app-heroes"; }
     static get properties() { return { "selectedHero": { "state": true } }; }
