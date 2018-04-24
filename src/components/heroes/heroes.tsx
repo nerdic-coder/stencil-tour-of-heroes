@@ -35,20 +35,7 @@ export class Heroes {
       </li>
       )}
   </ul>
-  {this.selectedHero ? (
-      <div>
-      <h2>{ this.selectedHero.name.toUpperCase() } Details</h2>
-      <div><span>id: </span>{this.selectedHero.id}</div>
-      <div>
-        <label>name:
-          <input type="text" value={this.selectedHero.name} onInput={(event) => this.handleChangeName(event)} placeholder="name" />
-        </label>
-      </div>
-      </div>
-    ) : (
-      <p>Select a hero!</p>
-    )
-  }
+  <app-hero-details hero={this.selectedHero}></app-hero-details>
 </div>
     );
   }

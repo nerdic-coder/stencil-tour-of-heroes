@@ -25,6 +25,42 @@ declare global {
 
 import '@stencil/router';
 
+import {
+  Hero,
+} from './models/hero';
+
+declare global {
+
+  namespace StencilComponents {
+    interface AppHeroDetails {
+      'hero': Hero;
+    }
+  }
+
+  interface HTMLAppHeroDetailsElement extends StencilComponents.AppHeroDetails, HTMLStencilElement {}
+
+  var HTMLAppHeroDetailsElement: {
+    prototype: HTMLAppHeroDetailsElement;
+    new (): HTMLAppHeroDetailsElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-hero-details': HTMLAppHeroDetailsElement;
+  }
+  interface ElementTagNameMap {
+    'app-hero-details': HTMLAppHeroDetailsElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-hero-details': JSXElements.AppHeroDetailsAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppHeroDetailsAttributes extends HTMLAttributes {
+      'hero'?: Hero;
+    }
+  }
+}
+
 
 declare global {
 

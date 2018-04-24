@@ -6,8 +6,11 @@
   "global": "app.global.js",
   "core": "app.core.js",
   "components": {
+    "app-hero-details": {
+      "$": "app-hero-details"
+    },
     "app-heroes": {
-      "$": "app-heroes"
+      "$": "app-hero-details"
     },
     "my-app": {
       "$": "my-app"
