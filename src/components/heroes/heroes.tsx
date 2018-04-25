@@ -12,13 +12,6 @@ export class Heroes {
 
   private heroes: Hero[] = HEROES;
 
-  handleChangeName(event) {
-    this.selectedHero = {
-      id: this.selectedHero.id,
-      name: event.target.value
-    };
-  }
-
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
   }
