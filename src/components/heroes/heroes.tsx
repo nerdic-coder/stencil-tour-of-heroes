@@ -1,6 +1,6 @@
 import { Component, State } from '@stencil/core';
 import { Hero } from '../../models/hero';
-import { HEROES } from './mock-heroes';
+import { HeroService } from '../../services/hero.service';
 
 @Component({
   tag: 'app-heroes',
@@ -8,25 +8,44 @@ import { HEROES } from './mock-heroes';
 })
 export class Heroes {
 
+  private heroService: HeroService;
   @State() private selectedHero: Hero;
+  @State() private heroes: Hero[];
 
-  private heroes: Hero[] = HEROES;
+  constructor() {
+    this.heroService = HeroService.Instance;
+  }
+
+  /**
+   * The component will load but has not rendered yet.
+   *
+   * This is a good place to make any last minute updates before rendering.
+   *
+   * Will only be called once
+   */
+  componentWillLoad() {
+    this.getHeroes();
+  }
+
+  getHeroes(): void {
+    this.heroService.getHeroes()
+      .subscribe(heroes => this.heroes = heroes);
+  }
 
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
   }
 
   render() {
-
     return (
 <div class='app-heroes'>
   <h2>My Heroes</h2>
   <ul class="heroes">
-    {this.heroes.map((hero) =>
+    {this.heroes ? (this.heroes.map((hero) =>
       <li class={(this.selectedHero === hero ? 'selected' : '')} onClick={ () => this.onSelect(hero)}>
         <span class="badge">{hero.id}</span> {hero.name}
       </li>
-      )}
+      )) : (null)}
   </ul>
   <app-hero-details hero={this.selectedHero}></app-hero-details>
 </div>
