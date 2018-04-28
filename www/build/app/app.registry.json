@@ -12,14 +12,17 @@
     "app-heroes": {
       "$": "app-hero-details"
     },
+    "app-messages": {
+      "$": "app-messages"
+    },
     "my-app": {
-      "$": "my-app"
+      "$": "app-messages"
     },
     "stencil-route": {
-      "$": "my-app"
+      "$": "app-messages"
     },
     "stencil-router": {
-      "$": "my-app"
+      "$": "app-messages"
     }
   }
 }

@@ -1,6 +1,7 @@
 import { Component, State } from '@stencil/core';
 import { Hero } from '../../models/hero';
 import { HeroService } from '../../services/hero.service';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   tag: 'app-heroes',
@@ -8,11 +9,13 @@ import { HeroService } from '../../services/hero.service';
 })
 export class Heroes {
 
+  private messageService: MessageService;
   private heroService: HeroService;
   @State() private selectedHero: Hero;
   @State() private heroes: Hero[];
 
   constructor() {
+    this.messageService = MessageService.Instance;
     this.heroService = HeroService.Instance;
   }
 
@@ -33,6 +36,7 @@ export class Heroes {
   }
 
   onSelect(hero: Hero): void {
+    this.messageService.add('Heroes: selected hero');
     this.selectedHero = hero;
   }
 

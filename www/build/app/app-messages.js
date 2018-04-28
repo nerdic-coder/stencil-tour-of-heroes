@@ -1,6 +1,33 @@
 /*! Built with http://stenciljs.com */
 const { h } = window.App;
 
+import { MessageService } from './chunk1.js';
+
+class Messages {
+    constructor() {
+        this.messageService = MessageService.Instance;
+    }
+    componentWillLoad() {
+        this.getMessages();
+    }
+    getMessages() {
+        this.messageService.getMessages()
+            .subscribe(messages => {
+            this.messages = [];
+            this.messages = messages;
+        });
+    }
+    render() {
+        return (h("div", { class: 'app-messages' },
+            "Messages:",
+            this.messages ?
+                (this.messages.map((message) => h("p", null, message))) : (null)));
+    }
+    static get is() { return "app-messages"; }
+    static get properties() { return { "messages": { "state": true } }; }
+    static get style() { return ""; }
+}
+
 class MyApp {
     constructor() {
         this.title = 'Tour of Heroes';
@@ -11,7 +38,8 @@ class MyApp {
                 h("h1", null, this.title)),
             h("main", null,
                 h("stencil-router", null,
-                    h("stencil-route", { url: '/', component: 'app-heroes', exact: true })))));
+                    h("stencil-route", { url: '/', component: 'app-heroes', exact: true }))),
+            h("app-messages", null)));
     }
     static get is() { return "my-app"; }
     static get style() { return "header {\n  background: #5851ff;\n  color: white;\n  height: 56px;\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-align: center;\n  -webkit-align-items: center;\n  -ms-flex-align: center;\n  align-items: center;\n  -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);\n  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);\n}\n\nh1 {\n  font-size: 1.4rem;\n  font-weight: 500;\n  color: #fff;\n  padding: 0 12px;\n}"; }
@@ -1203,4 +1231,4 @@ class Router {
     static get properties() { return { "activeRouter": { "context": "activeRouter" }, "historyType": { "type": "Any", "attr": "history-type" }, "match": { "state": true }, "root": { "type": String, "attr": "root" }, "titleSuffix": { "type": String, "attr": "title-suffix", "watchCallbacks": ["titleSuffixChanged"] } }; }
 }
 
-export { MyApp, Route as StencilRoute, Router as StencilRouter };
+export { Messages as AppMessages, MyApp, Route as StencilRoute, Router as StencilRouter };

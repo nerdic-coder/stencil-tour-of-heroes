@@ -98,6 +98,39 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface AppMessages {
+
+    }
+  }
+
+  interface HTMLAppMessagesElement extends StencilComponents.AppMessages, HTMLStencilElement {}
+
+  var HTMLAppMessagesElement: {
+    prototype: HTMLAppMessagesElement;
+    new (): HTMLAppMessagesElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-messages': HTMLAppMessagesElement;
+  }
+  interface ElementTagNameMap {
+    'app-messages': HTMLAppMessagesElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-messages': JSXElements.AppMessagesAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppMessagesAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface MyApp {
 
     }

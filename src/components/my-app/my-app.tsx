@@ -22,6 +22,7 @@ export class MyApp {
             </stencil-route>
           </stencil-router>
         </main>
+        <app-messages></app-messages>
       </div>
     );
   }
