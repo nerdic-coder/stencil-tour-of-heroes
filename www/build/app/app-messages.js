@@ -21,6 +21,8 @@ class Messages {
         return (h("div", { class: 'app-messages' },
             "Messages:",
             this.messages ?
+                (h("button", { class: "clear", onClick: () => this.messageService.clear() }, "clear")) : (null),
+            this.messages ?
                 (this.messages.map((message) => h("p", null, message))) : (null)));
     }
     static get is() { return "app-messages"; }

@@ -31,9 +31,17 @@ export class Messages {
 <div class='app-messages'>
 Messages:
   {this.messages ?
-    (this.messages.map((message) =>
-      <p>{message}</p>
-    )) : ( null )
+    (
+      <button class="clear"
+        onClick={() => this.messageService.clear()}>clear</button>
+    ) : ( null )
+  }
+  {this.messages ?
+    (
+      this.messages.map((message) =>
+        <p>{message}</p>
+      )
+    ) : ( null )
   }
 </div>
     );
