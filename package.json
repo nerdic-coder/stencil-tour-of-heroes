@@ -1,8 +1,8 @@
 {
-  "name": "@stencil/starter",
+  "name": "stencil-tour-of-heroes",
   "private": true,
-  "version": "0.0.1",
-  "description": "Stencil App Starter",
+  "version": "4.0.0",
+  "description": "Stencil Tour of Heroes",
   "files": [
     "dist/"
   ],
@@ -11,6 +11,7 @@
     "dev": "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
     "serve": "stencil-dev-server",
     "start": "npm run dev",
+    "mock": "json-server --watch db.json",
     "test": "jest --no-cache",
     "test.watch": "jest --watch --no-cache"
   },
@@ -23,18 +24,19 @@
     "@stencil/dev-server": "latest",
     "@stencil/utils": "latest",
     "@types/jest": "^21.1.1",
-    "jest": "^21.2.1"
+    "jest": "^21.2.1",
+    "json-server": "^0.12.2"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/stencil-app-starter.git"
+    "url": "git+https://github.com/nerdic-coder/stencil-tour-of-heroes.git"
   },
-  "author": "Ionic Team",
+  "author": "Johan Axelsson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ionic-team/stencil"
+    "url": "https://github.com/nerdic-coder/stencil-tour-of-heroes/issues"
   },
-  "homepage": "https://github.com/ionic-team/stencil",
+  "homepage": "https://github.com/nerdic-coder/stencil-tour-of-heroes",
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"
