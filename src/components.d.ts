@@ -26,14 +26,51 @@ declare global {
 import '@stencil/router';
 
 import {
+  MatchResults,
+} from '@stencil/router';
+import {
   Hero,
 } from './models/hero';
 
 declare global {
 
   namespace StencilComponents {
+    interface AppDashboard {
+
+    }
+  }
+
+  interface HTMLAppDashboardElement extends StencilComponents.AppDashboard, HTMLStencilElement {}
+
+  var HTMLAppDashboardElement: {
+    prototype: HTMLAppDashboardElement;
+    new (): HTMLAppDashboardElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-dashboard': HTMLAppDashboardElement;
+  }
+  interface ElementTagNameMap {
+    'app-dashboard': HTMLAppDashboardElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-dashboard': JSXElements.AppDashboardAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppDashboardAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface AppHeroDetails {
       'hero': Hero;
+      'match': MatchResults;
     }
   }
 
@@ -57,6 +94,7 @@ declare global {
   namespace JSXElements {
     export interface AppHeroDetailsAttributes extends HTMLAttributes {
       'hero'?: Hero;
+      'match'?: MatchResults;
     }
   }
 }

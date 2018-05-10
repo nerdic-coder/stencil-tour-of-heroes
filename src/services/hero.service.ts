@@ -22,6 +22,12 @@ export class HeroService {
     return of(HEROES);
   }
 
+  getHero(id: number): Observable<Hero> {
+    // TODO: send the message _after_ fetching the hero
+    this.messageService.add(`HeroService: fetched hero id=${id}`);
+    return of(HEROES.find(hero => hero.id === id));
+  }
+
   public static get Instance(): HeroService {
       // Do you need arguments? Make it a regular method instead.
       return this._instance || (this._instance = new this());

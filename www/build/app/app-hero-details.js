@@ -1,9 +1,24 @@
 /*! Built with http://stenciljs.com */
 const { h } = window.App;
 
-import { of, MessageService } from './chunk1.js';
+import { HeroService } from './chunk2.js';
 
 class HeroDetails {
+    constructor() {
+        this.heroService = HeroService.Instance;
+    }
+    componentWillLoad() {
+        this.getHero();
+    }
+    goBack() {
+        window.history.back();
+    }
+    getHero() {
+        this.heroService.getHero(parseInt(this.match.params.id))
+            .subscribe(hero => {
+            this.hero = hero;
+        });
+    }
     handleChangeName(event) {
         this.hero = {
             id: this.hero.id,
@@ -11,7 +26,7 @@ class HeroDetails {
         };
     }
     render() {
-        return (h("div", { class: 'app-heroes' }, this.hero ? (h("div", null,
+        return (h("div", { class: 'app-hero-details' }, this.hero ? (h("div", null,
             h("h2", null,
                 this.hero.name.toUpperCase(),
                 " Details"),
@@ -21,76 +36,12 @@ class HeroDetails {
             h("div", null,
                 h("label", null,
                     "name:",
-                    h("input", { type: "text", value: this.hero.name, onInput: (event) => this.handleChangeName(event), placeholder: "name" }))))) : (null)));
+                    h("input", { type: "text", value: this.hero.name, onInput: (event) => this.handleChangeName(event), placeholder: "name" }))),
+            h("button", { onClick: () => this.goBack() }, "go back"))) : (null)));
     }
     static get is() { return "app-hero-details"; }
-    static get properties() { return { "hero": { "type": "Any", "attr": "hero", "mutable": true } }; }
-    static get style() { return ""; }
+    static get properties() { return { "hero": { "type": "Any", "attr": "hero", "mutable": true }, "match": { "type": "Any", "attr": "match" } }; }
+    static get style() { return "/* HeroDetailComponent's private CSS styles */\n    label {\n      display: inline-block;\n      width: 3em;\n      margin: .5em 0;\n      color: #607D8B;\n      font-weight: bold;\n    }\n    input {\n      height: 2em;\n      font-size: 1em;\n      padding-left: .4em;\n    }\n    button {\n      margin-top: 20px;\n      font-family: Arial;\n      background-color: #eee;\n      border: none;\n      padding: 5px 10px;\n      border-radius: 4px;\n      cursor: pointer; cursor: hand;\n    }\n    button:hover {\n      background-color: #cfd8dc;\n    }\n    button:disabled {\n      background-color: #eee;\n      color: #ccc;\n      cursor: auto;\n    }"; }
 }
 
-const HEROES = [
-    { id: 11, name: 'Mr. Nice' },
-    { id: 12, name: 'Narco' },
-    { id: 13, name: 'Bombasto' },
-    { id: 14, name: 'Celeritas' },
-    { id: 15, name: 'Magneta' },
-    { id: 16, name: 'RubberMan' },
-    { id: 17, name: 'Dynama' },
-    { id: 18, name: 'Dr IQ' },
-    { id: 19, name: 'Magma' },
-    { id: 20, name: 'Tornado' }
-];
-
-class HeroService {
-    constructor() {
-        this.messageService = MessageService.Instance;
-    }
-    getHeroes() {
-        // TODO: send the message _after_ fetching the heroes
-        this.messageService.add('HeroService: fetched heroes');
-        return of(HEROES);
-    }
-    static get Instance() {
-        // Do you need arguments? Make it a regular method instead.
-        return this._instance || (this._instance = new this());
-    }
-}
-
-class Heroes {
-    constructor() {
-        this.messageService = MessageService.Instance;
-        this.heroService = HeroService.Instance;
-    }
-    /**
-     * The component will load but has not rendered yet.
-     *
-     * This is a good place to make any last minute updates before rendering.
-     *
-     * Will only be called once
-     */
-    componentWillLoad() {
-        this.getHeroes();
-    }
-    getHeroes() {
-        this.heroService.getHeroes()
-            .subscribe(heroes => this.heroes = heroes);
-    }
-    onSelect(hero) {
-        this.messageService.add('Heroes: selected hero');
-        this.selectedHero = hero;
-    }
-    render() {
-        return (h("div", { class: 'app-heroes' },
-            h("h2", null, "My Heroes"),
-            h("ul", { class: "heroes" }, this.heroes ? (this.heroes.map((hero) => h("li", { class: (this.selectedHero === hero ? 'selected' : ''), onClick: () => this.onSelect(hero) },
-                h("span", { class: "badge" }, hero.id),
-                " ",
-                hero.name))) : (null)),
-            h("app-hero-details", { hero: this.selectedHero })));
-    }
-    static get is() { return "app-heroes"; }
-    static get properties() { return { "heroes": { "state": true }, "selectedHero": { "state": true } }; }
-    static get style() { return "/* HeroesComponent's private CSS styles */\n.selected {\n  background-color: #CFD8DC !important;\n  color: white;\n}\n.heroes {\n  margin: 0 0 2em 0;\n  list-style-type: none;\n  padding: 0;\n  width: 15em;\n}\n.heroes li {\n  cursor: pointer;\n  position: relative;\n  left: 0;\n  background-color: #EEE;\n  margin: .5em;\n  padding: .3em 0;\n  height: 1.6em;\n  border-radius: 4px;\n}\n.heroes li.selected:hover {\n  background-color: #BBD8DC !important;\n  color: white;\n}\n.heroes li:hover {\n  color: #607D8B;\n  background-color: #DDD;\n  left: .1em;\n}\n.heroes .text {\n  position: relative;\n  top: -3px;\n}\n.heroes .badge {\n  display: inline-block;\n  font-size: small;\n  color: white;\n  padding: 0.8em 0.7em 0 0.7em;\n  background-color: #607D8B;\n  line-height: 1em;\n  position: relative;\n  left: -1px;\n  top: -4px;\n  height: 1.8em;\n  margin-right: .8em;\n  border-radius: 4px 0 0 4px;\n}"; }
-}
-
-export { HeroDetails as AppHeroDetails, Heroes as AppHeroes };
+export { HeroDetails as AppHeroDetails };
