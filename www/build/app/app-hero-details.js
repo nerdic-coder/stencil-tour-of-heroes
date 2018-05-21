@@ -1,7 +1,8 @@
 /*! Built with http://stenciljs.com */
 const { h } = window.App;
 
-import { HeroService } from './chunk2.js';
+import { a as HeroService } from './chunk-c1d6e273.js';
+import './chunk-2019fd7d.js';
 
 class HeroDetails {
     constructor() {
@@ -25,6 +26,10 @@ class HeroDetails {
             name: event.target.value
         };
     }
+    save() {
+        this.heroService.updateHero(this.hero)
+            .subscribe(() => this.goBack());
+    }
     render() {
         return (h("div", { class: 'app-hero-details' }, this.hero ? (h("div", null,
             h("h2", null,
@@ -37,10 +42,21 @@ class HeroDetails {
                 h("label", null,
                     "name:",
                     h("input", { type: "text", value: this.hero.name, onInput: (event) => this.handleChangeName(event), placeholder: "name" }))),
+            h("button", { onClick: () => this.save() }, "save"),
             h("button", { onClick: () => this.goBack() }, "go back"))) : (null)));
     }
     static get is() { return "app-hero-details"; }
-    static get properties() { return { "hero": { "type": "Any", "attr": "hero", "mutable": true }, "match": { "type": "Any", "attr": "match" } }; }
+    static get properties() { return {
+        "hero": {
+            "type": "Any",
+            "attr": "hero",
+            "mutable": true
+        },
+        "match": {
+            "type": "Any",
+            "attr": "match"
+        }
+    }; }
     static get style() { return "/* HeroDetailComponent's private CSS styles */\n    label {\n      display: inline-block;\n      width: 3em;\n      margin: .5em 0;\n      color: #607D8B;\n      font-weight: bold;\n    }\n    input {\n      height: 2em;\n      font-size: 1em;\n      padding-left: .4em;\n    }\n    button {\n      margin-top: 20px;\n      font-family: Arial;\n      background-color: #eee;\n      border: none;\n      padding: 5px 10px;\n      border-radius: 4px;\n      cursor: pointer; cursor: hand;\n    }\n    button:hover {\n      background-color: #cfd8dc;\n    }\n    button:disabled {\n      background-color: #eee;\n      color: #ccc;\n      cursor: auto;\n    }"; }
 }
 

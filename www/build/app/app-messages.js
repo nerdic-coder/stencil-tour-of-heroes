@@ -1,8 +1,8 @@
 /*! Built with http://stenciljs.com */
 const { h } = window.App;
 
-import { MessageService } from './chunk1.js';
-import { matchPath } from './chunk3.js';
+import { c as MessageService } from './chunk-2019fd7d.js';
+import { a as matchPath } from './chunk-f6f1d593.js';
 
 class Messages {
     constructor() {
@@ -27,7 +27,11 @@ class Messages {
                 (this.messages.map((message) => h("p", null, message))) : (null)));
     }
     static get is() { return "app-messages"; }
-    static get properties() { return { "messages": { "state": true } }; }
+    static get properties() { return {
+        "messages": {
+            "state": true
+        }
+    }; }
     static get style() { return ""; }
 }
 
@@ -67,7 +71,10 @@ class Route {
         this.group = null;
         this.groupIndex = null;
         this.routeRender = null;
+        this.scrollTopOffset = null;
         this.match = null;
+        this.activeInGroup = false;
+        this.scrollOnNextRender = false;
     }
     // Identify if the current route is a match.
     computeMatch(pathname) {
@@ -82,26 +89,82 @@ class Route {
         });
     }
     componentWillLoad() {
+        const thisRoute = this;
         // subscribe the project's active router and listen
         // for changes. Recompute the match if any updates get
         // pushed
-        this.unsubscribe = this.activeRouter.subscribe((switchMatched) => {
-            if (switchMatched) {
-                this.match = null;
-            }
-            else {
-                this.match = this.computeMatch();
-            }
-            return this.match;
-        }, this.group, this.groupIndex);
-        if (!this.group) {
-            this.match = this.computeMatch();
-        }
+        const listener = (matchResults) => {
+            this.match = matchResults;
+            return new Promise((resolve) => {
+                thisRoute.componentDidRerender = resolve;
+            });
+        };
+        this.unsubscribe = this.activeRouter.subscribe({
+            isMatch: this.computeMatch.bind(this),
+            listener,
+            groupId: this.group,
+            groupIndex: this.groupIndex
+        });
     }
     componentDidUnload() {
         // be sure to unsubscribe to the router so that we don't
         // get any memory leaks
         this.unsubscribe();
+    }
+    componentDidUpdate() {
+        if (this.componentDidRerender) {
+            // After route component has rendered then check if its child has.
+            const childElement = this.el.firstElementChild;
+            if (childElement && childElement.componentOnReady) {
+                childElement.componentOnReady().then(() => {
+                    if (this.componentDidRerender) {
+                        this.componentDidRerender();
+                    }
+                    this.componentDidRerender = undefined;
+                    this.activeInGroup = !!this.match;
+                    this.scrollOnNextRender = this.activeInGroup;
+                });
+            }
+            else {
+                // If there is no child then resolve the Promise immediately
+                this.componentDidRerender();
+                this.componentDidRerender = undefined;
+                this.activeInGroup = !!this.match;
+                this.scrollOnNextRender = this.activeInGroup;
+            }
+        }
+        else if (this.scrollOnNextRender) {
+            // If this is the new active route in a group and it is now active then scroll
+            this.scrollTo();
+            this.scrollOnNextRender = false;
+        }
+    }
+    scrollTo() {
+        const history = this.activeRouter.get('history');
+        if (this.scrollTopOffset == null || !history || this.isServer) {
+            return;
+        }
+        if (history.action === 'POP' && history.location.scrollPosition != null) {
+            return this.queue.write(function () {
+                window.scrollTo(history.location.scrollPosition[0], history.location.scrollPosition[1]);
+            });
+        }
+        // read a frame to let things measure correctly
+        return this.queue.read(() => {
+            // okay, the frame has passed. Go ahead and render now
+            return this.queue.write(() => {
+                window.scrollTo(0, this.scrollTopOffset);
+            });
+        });
+    }
+    hostData() {
+        if (!this.activeRouter || !this.match || (this.group && !this.activeInGroup)) {
+            return {
+                style: {
+                    display: 'none'
+                }
+            };
+        }
     }
     render() {
         // If there is no activeRouter then do not render
@@ -120,11 +183,65 @@ class Route {
         }
         if (this.component) {
             const ChildComponent = this.component;
-            return h(ChildComponent, Object.assign({}, childProps));
+            return (h(ChildComponent, Object.assign({}, childProps)));
         }
     }
     static get is() { return "stencil-route"; }
-    static get properties() { return { "activeRouter": { "context": "activeRouter" }, "component": { "type": String, "attr": "component" }, "componentProps": { "type": "Any", "attr": "component-props" }, "exact": { "type": Boolean, "attr": "exact" }, "group": { "type": String, "attr": "group" }, "groupIndex": { "type": Number, "attr": "group-index" }, "location": { "context": "location" }, "match": { "state": true }, "routeRender": { "type": "Any", "attr": "route-render" }, "url": { "type": "Any", "attr": "url" } }; }
+    static get properties() { return {
+        "activeInGroup": {
+            "state": true
+        },
+        "activeRouter": {
+            "context": "activeRouter"
+        },
+        "component": {
+            "type": String,
+            "attr": "component"
+        },
+        "componentProps": {
+            "type": "Any",
+            "attr": "component-props"
+        },
+        "el": {
+            "elementRef": true
+        },
+        "exact": {
+            "type": Boolean,
+            "attr": "exact"
+        },
+        "group": {
+            "type": String,
+            "attr": "group"
+        },
+        "groupIndex": {
+            "type": Number,
+            "attr": "group-index"
+        },
+        "isServer": {
+            "context": "isServer"
+        },
+        "location": {
+            "context": "location"
+        },
+        "match": {
+            "state": true
+        },
+        "queue": {
+            "context": "queue"
+        },
+        "routeRender": {
+            "type": "Any",
+            "attr": "route-render"
+        },
+        "scrollTopOffset": {
+            "type": Number,
+            "attr": "scroll-top-offset"
+        },
+        "url": {
+            "type": String,
+            "attr": "url"
+        }
+    }; }
 }
 
 function hasBasename(path, prefix) {
@@ -467,6 +584,65 @@ const supportsPopStateOnHashChange = () => (window.navigator.userAgent.indexOf('
 const supportsGoWithoutReloadUsingHash = () => (window.navigator.userAgent.indexOf('Firefox') === -1);
 const isExtraneousPopstateEvent = (event) => (event.state === undefined &&
     navigator.userAgent.indexOf('CriOS') === -1);
+const storageAvailable = (type) => {
+    try {
+        var storage = window[type], x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch (e) {
+        return e instanceof DOMException && (
+        // everything except Firefox
+        e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage.length !== 0;
+    }
+};
+
+const createScrollHistory = (applicationScrollKey = 'scrollPositions') => {
+    let scrollPositions = new Map();
+    if (storageAvailable('sessionStorage')) {
+        scrollPositions = window.sessionStorage.getItem(applicationScrollKey) ?
+            new Map(JSON.parse(window.sessionStorage.getItem(applicationScrollKey))) :
+            scrollPositions;
+    }
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    function set(key, value) {
+        scrollPositions.set(key, value);
+        if (storageAvailable('sessionStorage')) {
+            const arrayData = [];
+            scrollPositions.forEach((value, key) => {
+                arrayData.push([key, value]);
+            });
+            window.sessionStorage.setItem('scrollPositions', JSON.stringify(arrayData));
+        }
+    }
+    function get(key) {
+        return scrollPositions.get(key);
+    }
+    function has(key) {
+        return scrollPositions.has(key);
+    }
+    function capture(key) {
+        set(key, [window.scrollX, window.scrollY]);
+    }
+    return {
+        set,
+        get,
+        has,
+        capture
+    };
+};
 
 const PopStateEvent = 'popstate';
 const HashChangeEvent = 'hashchange';
@@ -489,6 +665,7 @@ const createBrowserHistory = (props = {}) => {
     const globalHistory = window.history;
     const canUseHistory = supportsHistory();
     const needsHashChangeListener = !supportsPopStateOnHashChange();
+    const scrollHistory = createScrollHistory();
     const { forceRefresh = false, getUserConfirmation = getConfirmation, keyLength = 6 } = props;
     const basename = props.basename ? stripTrailingSlash(addLeadingSlash(props.basename)) : '';
     const getDOMLocation = (historyState) => {
@@ -506,7 +683,11 @@ const createBrowserHistory = (props = {}) => {
     const createKey = () => (Math.random().toString(36).substr(2, keyLength));
     const transitionManager = createTransitionManager();
     const setState = (nextState) => {
+        // Capture location for the view before changing history.
+        scrollHistory.capture(history.location.key);
         Object.assign(history, nextState);
+        // Set scroll position based on its previous storage value
+        history.location.scrollPosition = scrollHistory.get(history.location.key);
         history.length = globalHistory.length;
         transitionManager.notifyListeners(history.location, history.action);
     };
@@ -955,10 +1136,16 @@ class Router {
         // subscribe the project's active router and listen
         // for changes. Recompute the match if any updates get
         // pushed
-        this.unsubscribe = this.activeRouter.subscribe(() => {
-            this.match = this.computeMatch();
+        this.unsubscribe = this.activeRouter.subscribe({
+            isMatch: this.computeMatch.bind(this),
+            listener: (matchResult) => {
+                this.match = matchResult;
+            },
         });
         this.match = this.computeMatch();
+    }
+    componentDidLoad() {
+        this.activeRouter.dispatch();
     }
     getLocation(location) {
         // Remove the root URL if found at beginning of string
@@ -976,7 +1163,27 @@ class Router {
         return h("slot", null);
     }
     static get is() { return "stencil-router"; }
-    static get properties() { return { "activeRouter": { "context": "activeRouter" }, "historyType": { "type": "Any", "attr": "history-type" }, "match": { "state": true }, "root": { "type": String, "attr": "root" }, "titleSuffix": { "type": String, "attr": "title-suffix", "watchCallbacks": ["titleSuffixChanged"] } }; }
+    static get properties() { return {
+        "activeRouter": {
+            "context": "activeRouter"
+        },
+        "historyType": {
+            "type": String,
+            "attr": "history-type"
+        },
+        "match": {
+            "state": true
+        },
+        "root": {
+            "type": String,
+            "attr": "root"
+        },
+        "titleSuffix": {
+            "type": String,
+            "attr": "title-suffix",
+            "watchCallbacks": ["titleSuffixChanged"]
+        }
+    }; }
 }
 
 export { Messages as AppMessages, MyApp, Route as StencilRoute, Router as StencilRouter };

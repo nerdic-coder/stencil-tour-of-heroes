@@ -3,13 +3,16 @@ Tour of Heroes tutorial in Stencil.
 
 Based on the [Angular Tutorial: Tour of Heroes](https://angular.io/tutorial)
 
-[Read the tutorial part 1](https://medium.com/@nerdic.coder/stencil-tutorial-tour-of-heroes-832a09ef3d82)
+[Read the tutorial part 1, Introduction](https://nerdic-coder.com/2018/04/21/stencil-tutorial-tour-of-heroes/)
 
-[Read the tutorial part 2](https://medium.com/@nerdic.coder/stencil-tutorial-tour-of-heroes-part-2-a6ed0b7b95ac)
+[Read the tutorial part 2, Components](https://nerdic-coder.com/2018/04/25/stencil-tutorial-tour-of-heroes-part-2/)
 
-[Read the tutorial part 3](https://medium.com/@nerdic.coder/stencil-tutorial-tour-of-heroes-part-3-9b0e128ee664)
+[Read the tutorial part 3, Services](https://nerdic-coder.com/2018/05/01/stencil-tutorial-tour-of-heroes-part-3/)
 
-[Read the tutorial part 4](https://medium.com/@nerdic.coder/stencil-tutorial-tour-of-heroes-part-4-1f8023542543)
+[Read the tutorial part 4, Routing](https://nerdic-coder.com/2018/05/10/stencil-tutorial-tour-of-heroes-part-4/)
+
+[Read the tutorial part 5, HTTP](https://nerdic-coder.com/2018/05/21/stencil-tutorial-tour-of-heroes-part-5/)
+
 ## Getting Started
 
 Installation:
@@ -19,7 +22,14 @@ cd stencil-tour-of-heroes
 npm install
 ```
 
-Running:
+Starting mock server:
+```bash
+npm run mock
+```
+
+or update src/global/config.ts SERVER_URL to your own custom backend.
+
+Starting stencil application:
 ```bash
 npm start
 ```

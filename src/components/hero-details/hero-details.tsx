@@ -39,6 +39,11 @@ export class HeroDetails {
     };
   }
 
+  save(): void {
+    this.heroService.updateHero(this.hero)
+      .subscribe(() => this.goBack());
+  }
+
   render() {
 
     return (
@@ -52,6 +57,7 @@ export class HeroDetails {
           <input type="text" value={this.hero.name} onInput={(event) => this.handleChangeName(event)} placeholder="name" />
         </label>
       </div>
+      <button onClick={() => this.save()}>save</button>
       <button onClick={() => this.goBack()}>go back</button>
       </div>
     ) : (

@@ -37,6 +37,7 @@ export class Dashboard {
       </stencil-route-link>
       )) : (null)}
   </div>
+  <app-hero-search></app-hero-search>
 </div>
     );
   }

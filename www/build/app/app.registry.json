@@ -12,6 +12,9 @@
     "app-hero-details": {
       "$": "app-hero-details"
     },
+    "app-hero-search": {
+      "$": "app-dashboard"
+    },
     "app-heroes": {
       "$": "app-heroes"
     },

@@ -1915,6 +1915,7 @@ var AsyncScheduler = /*@__PURE__*/ (function (_super) {
          * A flag to indicate whether the Scheduler is currently executing a batch of
          * queued actions.
          * @type {boolean}
+         * @deprecated internal use only
          */
         _this.active = false;
         /**
@@ -1922,6 +1923,7 @@ var AsyncScheduler = /*@__PURE__*/ (function (_super) {
          * coming from `setTimeout`, `setInterval`, `requestAnimationFrame`, and
          * others.
          * @type {any}
+         * @deprecated internal use only
          */
         _this.scheduled = undefined;
         return _this;
@@ -2568,7 +2570,7 @@ var AsyncSubject = /*@__PURE__*/ (function (_super) {
 }(Subject));
 
 /** PURE_IMPORTS_START  PURE_IMPORTS_END */
-var nextHandle = 0;
+var nextHandle = 1;
 var tasksByHandle = {};
 function runIfPresent(handle) {
     var cb = tasksByHandle[handle];
@@ -2986,6 +2988,8 @@ var VirtualAction = /*@__PURE__*/ (function (_super) {
 
 /** PURE_IMPORTS_START  PURE_IMPORTS_END */
 
+/** PURE_IMPORTS_START _Observable PURE_IMPORTS_END */
+
 /** PURE_IMPORTS_START tslib PURE_IMPORTS_END */
 /**
  * An error thrown when an element was queried at a certain index of an
@@ -3049,6 +3053,57 @@ var TimeoutError = /*@__PURE__*/ (function (_super) {
 }(Error));
 
 /** PURE_IMPORTS_START tslib,_Subscriber PURE_IMPORTS_END */
+/**
+ * Applies a given `project` function to each value emitted by the source
+ * Observable, and emits the resulting values as an Observable.
+ *
+ * <span class="informal">Like [Array.prototype.map()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map),
+ * it passes each source value through a transformation function to get
+ * corresponding output values.</span>
+ *
+ * <img src="./img/map.png" width="100%">
+ *
+ * Similar to the well known `Array.prototype.map` function, this operator
+ * applies a projection to each value and emits that projection in the output
+ * Observable.
+ *
+ * @example <caption>Map every click to the clientX position of that click</caption>
+ * var clicks = Rx.Observable.fromEvent(document, 'click');
+ * var positions = clicks.map(ev => ev.clientX);
+ * positions.subscribe(x => console.log(x));
+ *
+ * @see {@link mapTo}
+ * @see {@link pluck}
+ *
+ * @param {function(value: T, index: number): R} project The function to apply
+ * to each `value` emitted by the source Observable. The `index` parameter is
+ * the number `i` for the i-th emission that has happened since the
+ * subscription, starting from the number `0`.
+ * @param {any} [thisArg] An optional argument to define what `this` is in the
+ * `project` function.
+ * @return {Observable<R>} An Observable that emits the values from the source
+ * Observable transformed by the given `project` function.
+ * @method map
+ * @owner Observable
+ */
+function map(project, thisArg) {
+    return function mapOperation(source) {
+        if (typeof project !== 'function') {
+            throw new TypeError('argument is not a function. Are you looking for `mapTo()`?');
+        }
+        return source.lift(new MapOperator(project, thisArg));
+    };
+}
+var MapOperator = /*@__PURE__*/ (function () {
+    function MapOperator(project, thisArg) {
+        this.project = project;
+        this.thisArg = thisArg;
+    }
+    MapOperator.prototype.call = function (subscriber, source) {
+        return source.subscribe(new MapSubscriber(subscriber, this.project, this.thisArg));
+    };
+    return MapOperator;
+}());
 /**
  * We need this JSDoc comment for affecting ESDoc.
  * @ignore
@@ -3325,16 +3380,134 @@ var CombineLatestSubscriber = /*@__PURE__*/ (function (_super) {
 }(OuterSubscriber));
 
 /** PURE_IMPORTS_START _symbol_observable PURE_IMPORTS_END */
+/** Identifies an input as being Observable (but not necessary an Rx Observable) */
+function isInteropObservable(input) {
+    return input && typeof input[observable] === 'function';
+}
 
 /** PURE_IMPORTS_START _symbol_iterator PURE_IMPORTS_END */
+/** Identifies an input as being an Iterable */
+function isIterable(input) {
+    return input && typeof input[iterator] === 'function';
+}
 
 /** PURE_IMPORTS_START _Observable,_Subscription,_util_subscribeToPromise PURE_IMPORTS_END */
+function fromPromise(input, scheduler) {
+    if (!scheduler) {
+        return new Observable(subscribeToPromise(input));
+    }
+    else {
+        return new Observable(function (subscriber) {
+            var sub = new Subscription();
+            sub.add(scheduler.schedule(function () {
+                return input.then(function (value) {
+                    sub.add(scheduler.schedule(function () {
+                        subscriber.next(value);
+                        sub.add(scheduler.schedule(function () { return subscriber.complete(); }));
+                    }));
+                }, function (err) {
+                    sub.add(scheduler.schedule(function () { return subscriber.error(err); }));
+                });
+            }));
+            return sub;
+        });
+    }
+}
 
 /** PURE_IMPORTS_START _Observable,_Subscription,_symbol_iterator,_util_subscribeToIterable PURE_IMPORTS_END */
+function fromIterable(input, scheduler) {
+    if (!input) {
+        throw new Error('Iterable cannot be null');
+    }
+    if (!scheduler) {
+        return new Observable(subscribeToIterable(input));
+    }
+    else {
+        return new Observable(function (subscriber) {
+            var sub = new Subscription();
+            var iterator$$1;
+            sub.add(function () {
+                // Finalize generators
+                if (iterator$$1 && typeof iterator$$1.return === 'function') {
+                    iterator$$1.return();
+                }
+            });
+            sub.add(scheduler.schedule(function () {
+                iterator$$1 = input[iterator]();
+                sub.add(scheduler.schedule(function () {
+                    if (subscriber.closed) {
+                        return;
+                    }
+                    var value;
+                    var done;
+                    try {
+                        var result = iterator$$1.next();
+                        value = result.value;
+                        done = result.done;
+                    }
+                    catch (err) {
+                        subscriber.error(err);
+                        return;
+                    }
+                    if (done) {
+                        subscriber.complete();
+                    }
+                    else {
+                        subscriber.next(value);
+                        this.schedule();
+                    }
+                }));
+            }));
+            return sub;
+        });
+    }
+}
 
 /** PURE_IMPORTS_START _Observable,_Subscription,_symbol_observable,_util_subscribeToObservable PURE_IMPORTS_END */
+function fromObservable(input, scheduler) {
+    if (!scheduler) {
+        return new Observable(subscribeToObservable(input));
+    }
+    else {
+        return new Observable(function (subscriber) {
+            var sub = new Subscription();
+            sub.add(scheduler.schedule(function () {
+                var observable$$1 = input[observable]();
+                sub.add(observable$$1.subscribe({
+                    next: function (value) { sub.add(scheduler.schedule(function () { return subscriber.next(value); })); },
+                    error: function (err) { sub.add(scheduler.schedule(function () { return subscriber.error(err); })); },
+                    complete: function () { sub.add(scheduler.schedule(function () { return subscriber.complete(); })); },
+                }));
+            }));
+            return sub;
+        });
+    }
+}
 
-/** PURE_IMPORTS_START _Observable,_util_isPromise,_util_isArrayLike,_util_isObservable,_util_isIterable,_fromArray,_fromPromise,_fromIterable,_fromObservable,_util_subscribeTo PURE_IMPORTS_END */
+/** PURE_IMPORTS_START _Observable,_util_isPromise,_util_isArrayLike,_util_isInteropObservable,_util_isIterable,_fromArray,_fromPromise,_fromIterable,_fromObservable,_util_subscribeTo PURE_IMPORTS_END */
+function from(input, scheduler) {
+    if (!scheduler) {
+        if (input instanceof Observable) {
+            return input;
+        }
+        return new Observable(subscribeTo(input));
+    }
+    if (input != null) {
+        if (isInteropObservable(input)) {
+            return fromObservable(input, scheduler);
+        }
+        else if (isPromise(input)) {
+            return fromPromise(input, scheduler);
+        }
+        else if (isArrayLike(input)) {
+            return fromArray(input, scheduler);
+        }
+        else if (isIterable(input) || typeof input === 'string') {
+            return fromIterable(input, scheduler);
+        }
+    }
+    throw new TypeError((input !== null && typeof input || input) + ' is not observable');
+}
 
 /** PURE_IMPORTS_START tslib,_util_subscribeToResult,_OuterSubscriber,_map,_observable_from PURE_IMPORTS_END */
 /**
@@ -3471,6 +3644,13 @@ var ForkJoinSubscriber = /*@__PURE__*/ (function (_super) {
 /** PURE_IMPORTS_START _defer,_empty PURE_IMPORTS_END */
 
 /** PURE_IMPORTS_START _isArray PURE_IMPORTS_END */
+function isNumeric(val) {
+    // parseFloat NaNs numeric-cast false positives (null|true|false|"")
+    // ...but misinterprets leading-number strings, particularly hex literals ("0x...")
+    // subtraction forces infinities to NaN
+    // adding 1 corrects loss of precision from parseFloat (#15100)
+    return !isArray(val) && (val - parseFloat(val) + 1) >= 0;
+}
 
 /** PURE_IMPORTS_START _Observable,_scheduler_async,_util_isNumeric PURE_IMPORTS_END */
 
@@ -3767,4 +3947,4 @@ class MessageService {
     }
 }
 
-export { of, MessageService };
+export { Observable as a, of as b, MessageService as c, __extends as d, tryCatch as e, errorObject as f, OuterSubscriber as g, subscribeToResult as h, async as i, Subscriber as j, isScheduler as k, Subscription as l, isArray as m, from as n, Notification as o, noop as p, isFunction as q, EmptyError as r, ArgumentOutOfRangeError as s, empty$1 as t, map as u, Subject as v, BehaviorSubject as w, AsyncSubject as x, ReplaySubject as y, refCount as z, fromArray as a0, scalar as a1, asap as a2, isNumeric as a3, TimeoutError as a4, throwError as a5 };

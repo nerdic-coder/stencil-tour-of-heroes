@@ -1,7 +1,7 @@
 /*! Built with http://stenciljs.com */
 (function(win, doc, namespace, fsNamespace, resourcesUrl, appCore, appCoreSsr, appCorePolyfilled, hydratedCssClass, components) {
 
-function init(win, doc, namespace, fsNamespace, resourcesUrl, appCore, appCorePolyfilled, hydratedCssClass, components, HTMLElementPrototype, App, x, y, scriptElm, orgComponentOnReady) {
+    function init(win, doc, namespace, fsNamespace, resourcesUrl, appCore, appCorePolyfilled, hydratedCssClass, components, HTMLElementPrototype, App, x, y, scriptElm, orgComponentOnReady) {
     // create global namespace if it doesn't already exist
     App = win[namespace] = win[namespace] || {};
     App.components = components;
@@ -118,6 +118,6 @@ function doesNotSupportsDynamicImports(dynamicImportTest) {
 }
 
 
-init(win, doc, namespace, fsNamespace, resourcesUrl, appCore, appCoreSsr, appCorePolyfilled, hydratedCssClass, components);
+    init(win, doc, namespace, fsNamespace, resourcesUrl, appCore, appCoreSsr, appCorePolyfilled, hydratedCssClass, components);
 
-})(window, document, "App","app",0,"app.core.js","es5-build-disabled.js","hydrated",[["app-dashboard","app-dashboard",1,[["heroes",5]]],["app-hero-details","app-hero-details",1,[["hero",2],["match",1]]],["app-heroes","app-heroes",1,[["heroes",5]]],["app-messages","app-messages",1,[["messages",5]]],["my-app","app-messages",1],["stencil-route","app-messages",0,[["activeRouter",3,0,0,0,"activeRouter"],["component",1,0,1,2],["componentProps",1],["exact",1,0,1,3],["group",1,0,1,2],["groupIndex",1,0,1,4],["location",3,0,0,0,"location"],["match",5],["routeRender",1],["url",1]]],["stencil-route-link","stencil-route-link",0,[["activeClass",1,0,1,2],["activeRouter",3,0,0,0,"activeRouter"],["anchorRole",1,0,1,2],["anchorTabIndex",1,0,1,2],["anchorTitle",1,0,1,2],["custom",1,0,1,2],["exact",1,0,1,3],["match",5],["url",1,0,1,2],["urlMatch",1]]],["stencil-router","app-messages",0,[["activeRouter",3,0,0,0,"activeRouter"],["historyType",1],["match",5],["root",1,0,1,2],["titleSuffix",1,0,1,2]]]],HTMLElement.prototype);
+    })(window, document, "App","app",0,"app.core.js","es5-build-disabled.js","hydrated",[["app-dashboard","app-dashboard",1,[["heroes",5]]],["app-hero-details","app-hero-details",1,[["hero",2],["match",1]]],["app-hero-search","app-dashboard",1,[["heroes",5]]],["app-heroes","app-heroes",1,[["hero",5],["heroes",5]]],["app-messages","app-messages",1,[["messages",5]]],["my-app","app-messages",1],["stencil-route","app-messages",0,[["activeInGroup",5],["activeRouter",3,0,0,0,"activeRouter"],["component",1,0,1,2],["componentProps",1],["el",7],["exact",1,0,1,3],["group",1,0,1,2],["groupIndex",1,0,"group-index",4],["isServer",3,0,0,0,"isServer"],["location",3,0,0,0,"location"],["match",5],["queue",3,0,0,0,"queue"],["routeRender",1],["scrollTopOffset",1,0,"scroll-top-offset",4],["url",1,0,1,2]]],["stencil-route-link","stencil-route-link",0,[["activeClass",1,0,"active-class",2],["activeRouter",3,0,0,0,"activeRouter"],["anchorClass",1,0,"anchor-class",2],["anchorRole",1,0,"anchor-role",2],["anchorTabIndex",1,0,"anchor-tab-index",2],["anchorTitle",1,0,"anchor-title",2],["custom",1,0,1,2],["exact",1,0,1,3],["match",5],["strict",1,0,1,3],["url",1,0,1,2],["urlMatch",1,0,"url-match",2]]],["stencil-router","app-messages",0,[["activeRouter",3,0,0,0,"activeRouter"],["historyType",1,0,"history-type",2],["match",5],["root",1,0,1,2],["titleSuffix",1,0,"title-suffix",2]]]],HTMLElement.prototype);

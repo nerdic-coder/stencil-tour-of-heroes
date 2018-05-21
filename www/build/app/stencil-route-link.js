@@ -1,7 +1,7 @@
 /*! Built with http://stenciljs.com */
 const { h } = window.App;
 
-import { matchPath } from './chunk3.js';
+import { a as matchPath } from './chunk-f6f1d593.js';
 
 /**
   * @name Route
@@ -13,6 +13,7 @@ class RouteLink {
         this.unsubscribe = () => { return; };
         this.activeClass = 'link-active';
         this.exact = false;
+        this.strict = true;
         /**
          *  Custom tag to use instead of an anchor
          */
@@ -28,7 +29,7 @@ class RouteLink {
         const match = matchPath(pathname, {
             path: this.urlMatch || this.url,
             exact: this.exact,
-            strict: true
+            strict: this.strict
         });
         return match;
     }
@@ -36,8 +37,11 @@ class RouteLink {
         // subscribe the project's active router and listen
         // for changes. Recompute the match if any updates get
         // pushed
-        this.unsubscribe = this.activeRouter.subscribe(() => {
-            this.match = this.computeMatch();
+        this.unsubscribe = this.activeRouter.subscribe({
+            isMatch: this.computeMatch.bind(this),
+            listener: (matchResult) => {
+                this.match = matchResult;
+            },
         });
         // Likely that this route link could receive a location prop
         this.match = this.computeMatch();
@@ -54,7 +58,7 @@ class RouteLink {
             return;
         }
         const history = this.activeRouter.get('history');
-        return history.push(this.getUrl(this.url), {});
+        return history.push(this.getUrl(this.url));
     }
     // Get the URL for this route link without the root from the router
     getUrl(url) {
@@ -68,10 +72,13 @@ class RouteLink {
     render() {
         let anchorAttributes = {
             class: {
-                [this.activeClass]: this.match !== null
+                [this.activeClass]: this.match !== null,
             },
             onClick: this.handleClick.bind(this)
         };
+        if (this.anchorClass) {
+            anchorAttributes.class[this.anchorClass] = true;
+        }
         if (this.custom === 'a') {
             anchorAttributes = Object.assign({}, anchorAttributes, { href: this.url, title: this.anchorTitle, role: this.anchorRole, tabindex: this.anchorTabIndex });
         }
@@ -79,7 +86,54 @@ class RouteLink {
             h("slot", null)));
     }
     static get is() { return "stencil-route-link"; }
-    static get properties() { return { "activeClass": { "type": String, "attr": "active-class" }, "activeRouter": { "context": "activeRouter" }, "anchorRole": { "type": String, "attr": "anchor-role" }, "anchorTabIndex": { "type": String, "attr": "anchor-tab-index" }, "anchorTitle": { "type": String, "attr": "anchor-title" }, "custom": { "type": String, "attr": "custom" }, "exact": { "type": Boolean, "attr": "exact" }, "match": { "state": true }, "url": { "type": String, "attr": "url" }, "urlMatch": { "type": "Any", "attr": "url-match" } }; }
+    static get properties() { return {
+        "activeClass": {
+            "type": String,
+            "attr": "active-class"
+        },
+        "activeRouter": {
+            "context": "activeRouter"
+        },
+        "anchorClass": {
+            "type": String,
+            "attr": "anchor-class"
+        },
+        "anchorRole": {
+            "type": String,
+            "attr": "anchor-role"
+        },
+        "anchorTabIndex": {
+            "type": String,
+            "attr": "anchor-tab-index"
+        },
+        "anchorTitle": {
+            "type": String,
+            "attr": "anchor-title"
+        },
+        "custom": {
+            "type": String,
+            "attr": "custom"
+        },
+        "exact": {
+            "type": Boolean,
+            "attr": "exact"
+        },
+        "match": {
+            "state": true
+        },
+        "strict": {
+            "type": Boolean,
+            "attr": "strict"
+        },
+        "url": {
+            "type": String,
+            "attr": "url"
+        },
+        "urlMatch": {
+            "type": String,
+            "attr": "url-match"
+        }
+    }; }
 }
 
 export { RouteLink as StencilRouteLink };

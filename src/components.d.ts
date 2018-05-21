@@ -103,6 +103,39 @@ declare global {
 declare global {
 
   namespace StencilComponents {
+    interface AppHeroSearch {
+
+    }
+  }
+
+  interface HTMLAppHeroSearchElement extends StencilComponents.AppHeroSearch, HTMLStencilElement {}
+
+  var HTMLAppHeroSearchElement: {
+    prototype: HTMLAppHeroSearchElement;
+    new (): HTMLAppHeroSearchElement;
+  };
+  interface HTMLElementTagNameMap {
+    'app-hero-search': HTMLAppHeroSearchElement;
+  }
+  interface ElementTagNameMap {
+    'app-hero-search': HTMLAppHeroSearchElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      'app-hero-search': JSXElements.AppHeroSearchAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface AppHeroSearchAttributes extends HTMLAttributes {
+
+    }
+  }
+}
+
+
+declare global {
+
+  namespace StencilComponents {
     interface AppHeroes {
 
     }

@@ -262,4 +262,4 @@ function matchPath(pathname, options = {}) {
     };
 }
 
-export { matchPath };
+export { matchPath as a };
